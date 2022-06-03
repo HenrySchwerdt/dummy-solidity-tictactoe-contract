@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.8;
+pragma solidity ^0.8.8;
 
 contract TicTacToe {
 
@@ -11,15 +11,15 @@ contract TicTacToe {
 
     uint public bid;
 
-    uint16 DRAW = 0x1FF;
-    uint16 ROW_1 = 0x7;
-    uint16 ROW_2 = 0x38;
-    uint16 ROW_3 = 0x1C0;
-    uint16 COLUMN_1 = 0x49;
-    uint16 COLUMN_2 = 0x92;
-    uint16 COLUMN_3 = 0x124;
-    uint16 DIAGONAL_1 = 0x111;
-    uint16 DIAGONAL_2 = 0x54;
+    uint16 constant DRAW = 0x1FF;
+    uint16 constant ROW_1 = 0x7;
+    uint16 constant ROW_2 = 0x38;
+    uint16 constant ROW_3 = 0x1C0;
+    uint16 constant COLUMN_1 = 0x49;
+    uint16 constant COLUMN_2 = 0x92;
+    uint16 constant COLUMN_3 = 0x124;
+    uint16 constant DIAGONAL_1 = 0x111;
+    uint16 constant DIAGONAL_2 = 0x54;
   
     address payable playerA;
     address payable playerB; 
@@ -85,11 +85,6 @@ contract TicTacToe {
     // Playing TicTacToe
     function play(uint8 field) atStage(State.PLAYING) isVaildField(field) isFieldAlreadyInUse(field) public {
         setField(field);
-        if(isDraw()) {
-            playerA.transfer(bid);
-            playerB.transfer(bid);
-            winner = "DRAW";
-        }
         if(isWinner(boardA)) {
             playerA.transfer(bid * 2);
             stage = State.GAME_OVER;
@@ -99,6 +94,11 @@ contract TicTacToe {
             playerB.transfer(bid * 2);
             stage = State.GAME_OVER;
             winner = "Player B is winner!";
+        }
+        if(isDraw()) {
+            playerA.transfer(bid);
+            playerB.transfer(bid);
+            winner = "DRAW";
         }
         switchPlayer();
     }
@@ -153,7 +153,7 @@ contract TicTacToe {
         return mergeBoards() & DRAW == DRAW; 
     }
 
-    function isWinner(uint16 board) internal view returns(bool) {
+    function isWinner(uint16 board) internal pure returns(bool) {
         return hasMatch(~board, ROW_1) || hasMatch(~board, ROW_2) ||
                 hasMatch(~board, ROW_3) || hasMatch(~board, COLUMN_1) ||
                 hasMatch(~board, COLUMN_2) || hasMatch(~board, COLUMN_3) ||
